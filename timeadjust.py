@@ -77,7 +77,7 @@ def main(file,delta_seconds):
     files_rename()
             
 # start by getting parameters
-parser = argparse.ArgumentParser('subtime')
+parser = argparse.ArgumentParser('timeadjust')
 parser.add_argument('-f', '--subfile', required = True, type = str, metavar = '', help = 'Path to subtitle file')
 parser.add_argument('-s', '--secondsdelta', type = float, default = -3, metavar = '', help = 'Time adjustment in seconds')            
 args = parser.parse_args()
