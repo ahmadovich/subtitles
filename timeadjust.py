@@ -9,10 +9,9 @@ def modifytime(infile,mydelta):
     pattern = re.compile(r'(\d\d:\d\d:\d\d,\d\d\d)(\s*)(-->)(\s*)(\d\d:\d\d:\d\d,\d\d\d)')
     
     # Open temp file for writing correct subtitles
-    print('Opening new file')
+    
     with open(os.path.split(args.subfile)[0]+'\\fixed.srt','w') as outfile:
-        
-        print('File opened successfully')
+            
         for lines in infile:
                 match = re.search(pattern,lines)
                 # Start editing times
@@ -51,7 +50,7 @@ def modifytime(infile,mydelta):
                 else:
                     outfile.write(lines)
                     # here we should write other lines, like subtitles itself unchanged to the new file
-        print('Done')            
+        print('Subtitle time adjusted')            
 def formattime(time): 
     hour = int(time // 3600)
     time %= 3600
@@ -62,12 +61,16 @@ def formattime(time):
     return (str(hour).zfill(2)+':'+str(minutes).zfill(2)+':'+str(seconds).zfill(2)+','+str(milliseconds).zfill(3))
 
 def files_rename():
-    random_name = os.path.split(args.subfile)[0]+'\\'+str(random.randint(1,9999999))+'.srt'
-    print('Renaming new file')
-    os.rename(args.subfile,random_name)
+    if args.delete: 
+       os.remove(args.subfile)
+       print('Removed old subtitle file')
+    else:
+        random_name = os.path.split(args.subfile)[0]+'\\'+str(random.randint(1,9999999))+'.srt'
+        os.rename(args.subfile,random_name)
+        print('Copy of original subtitle file saved as ' + random_name)
+    
     os.rename(os.path.split(args.subfile)[0]+'\\'+'fixed.srt',args.subfile)
-    
-    
+          
 def main(file,delta_seconds):    
    
     with open(file,'r') as infile:
@@ -81,7 +84,8 @@ def main(file,delta_seconds):
 # start by getting parameters
 parser = argparse.ArgumentParser('timeadjust')
 parser.add_argument('-f', '--subfile', required = True, type = str, metavar = '', help = 'Path to subtitle file')
-parser.add_argument('-s', '--secondsdelta', type = float, default = -3, metavar = '', help = 'Time adjustment in seconds')            
+parser.add_argument('-s', '--secondsdelta', type = float, default = -3, metavar = '', help = 'Time adjustment in seconds')
+parser.add_argument('-d', '--delete', action = 'store_true' , help = 'Don\'t keep original files')            
 args = parser.parse_args()
 
 if __name__ == '__main__': main(args.subfile,args.secondsdelta)        
