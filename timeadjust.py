@@ -8,12 +8,14 @@ def modifytime(infile,mydelta):
     #This will compile a pattern for 5 different regex groups.
     pattern = re.compile(r'(\d\d:\d\d:\d\d,\d\d\d)(\s*)(-->)(\s*)(\d\d:\d\d:\d\d,\d\d\d)')
     
+    # Open temp file for writing correct subtitles
     print('Opening new file')
     with open(os.path.split(args.subfile)[0]+'\\fixed.srt','w') as outfile:
         
         print('File opened successfully')
         for lines in infile:
                 match = re.search(pattern,lines)
+                # Start editing times
                 if match:
                     starttime = (match.group(1)).split(':') #Time start
                     endtime = (match.group(5)).split(':') #Time end
@@ -23,14 +25,14 @@ def modifytime(infile,mydelta):
                     end_seconds_split = endtime[2].split(',')
                     end_seconds = int(end_seconds_split[0]) + (float(end_seconds_split[1]) / 1000)
                     end_total_seconds = ((int(endtime[0]) *3600) + (int(endtime[1]) *60) + float(end_seconds)) + mydelta
-                    #check if new value is less than 0 ( not allowed ), we can only check on start time only if we want.
+                    #check if new value is less than 0 ( not allowed ), we can check on start time only if we want.
                     if start_total_seconds < 0  or end_total_seconds < 0:
                         ignored_lines += 1
                         #if new time is < 0 then keep the original timing for start and end
                         new_start_formatted = match.group(1)
                         new_end_formatted = match.group(5)
-                        if ignored_lines > 2 :
-                            print('Exiting, too many lines were ignored')
+                        if ignored_lines > 5 :
+                            print('Exiting, too many lines were ignored, more than five lines')
                             outfile.close()
                             print('Removing temp file')
                             os.remove(os.path.split(args.subfile)[0]+'\\fixed.srt')

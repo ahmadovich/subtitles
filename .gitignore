@@ -1,3 +1,6 @@
 /dist/
 /build/
 /Subtitles.spec
+/.project
+/.pydevproject
+/timeadjust.spec
